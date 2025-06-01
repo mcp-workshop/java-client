@@ -1,0 +1,22 @@
+logging:
+    level:
+        io:
+            modelcontextprotocol:
+                client: INFO
+                spec: INFO
+spring:
+    ai:
+        ollama:
+            base-url: http://localhost:11434
+            chat:
+                model: qwen2.5
+            embedding:
+                model: granite-embedding:278m
+        mcp:
+            client:
+                stdio:
+                    servers-configuration: "classpath:/mcp-servers-config.json"
+    application:
+        name: Client
+    main:
+        web-application-type: none
