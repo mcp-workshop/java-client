@@ -7,16 +7,26 @@ logging:
 spring:
     ai:
         ollama:
-            base-url: http://localhost:11434
+            base-url: http://192.168.86.24:11434
             chat:
-                model: qwen2.5
+                model: qwen3
+                options:
+                    seed: 123456789
+                    temperature: 0.9
             embedding:
                 model: granite-embedding:278m
+                options:
+                    seed: 123456789
         mcp:
             client:
+                sse:
+                    connections:
+                        weather:
+                            url: http://localhost:8080
                 stdio:
                     servers-configuration: "classpath:/mcp-servers-config.json"
     application:
-        name: Client
+        name: AssistantClient
     main:
         web-application-type: none
+

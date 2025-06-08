@@ -4,14 +4,14 @@
       "command": "java",
       "args": [
         "-jar",
-        "/tmp/GoogleCalendarApp-1.0-SNAPSHOT.jar"
+        "/tmp/GoogleCalendar-1.0-SNAPSHOT.jar"
       ]
     },
-    "brave-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-brave-search"
+    "google-maps": {
+      "command": "java",
+      "args" : [
+        "-jar",
+        "/tmp/google-maps-travel-time-1.0-SNAPSHOT.jar"
       ]
     }
   }
