@@ -2,21 +2,31 @@ logging:
     level:
         io:
             modelcontextprotocol:
-                client: INFO
-                spec: INFO
+                client: DEBUG
+                spec: DEBUG
+    file:
+        name: /tmp/client.log
 spring:
     ai:
         ollama:
-            base-url: http://localhost:11434
             chat:
                 model: qwen2.5
-            embedding:
-                model: granite-embedding:278m
+                options:
+                    seed: 123456789
+                    temperature: 0.9
+            base-url: http://localhost:11434
+
         mcp:
             client:
+                sse:
+                    connections:
+                        server-1:
+                            url: http://localhost:8080
                 stdio:
                     servers-configuration: "classpath:/mcp-servers-config.json"
+                type: sync
     application:
-        name: Client
+        name: AssistantClient
     main:
         web-application-type: none
+

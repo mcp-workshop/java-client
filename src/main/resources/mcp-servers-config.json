@@ -1,17 +1,10 @@
 {
   "mcpServers": {
-    "google-calendar": {
+    "open-weather": {
       "command": "java",
       "args": [
         "-jar",
-        "/tmp/GoogleCalendarApp-1.0-SNAPSHOT.jar"
-      ]
-    },
-    "brave-search": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-brave-search"
+        "/tmp/OpenWeather2-0.0.1-SNAPSHOT.jar"
       ]
     }
   }
