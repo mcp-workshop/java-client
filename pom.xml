@@ -12,35 +12,20 @@
 	<artifactId>Client</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Client</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<description>MCP Client for the workshop</description>
 	<properties>
 		<java.version>21</java.version>
 		<spring-ai.version>1.0.0</spring-ai.version>
 	</properties>
 	<dependencies>
-
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
 			<artifactId>spring-ai-starter-mcp-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
-			<artifactId>spring-ai-starter-model-ollama</artifactId>
+			<artifactId>spring-ai-starter-model-anthropic</artifactId>
 		</dependency>
-
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

@@ -1,104 +1,71 @@
 package es.mcpworkshop.client.Client;
 
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.tool.ToolCallbackProvider;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
 
 @Configuration
 public class AIConfig {
+
+  @Value("classpath:basic-prompt.txt")
+  private Resource basicResource;
+
+  @Value("classpath:enhanced-prompt.txt")
+  private Resource enhancedResource;
 
   @Bean
   ChatClient chatClient(
       ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, ToolCallbackProvider tools) {
 
-    String systemText =
-"""
-Eres un asistente inteligente especializado en la gestión de eventos y planificación de desplazamientos en España. Tu función principal es ayudar al usuario proporcionando información completa y contextualizada sobre sus eventos programados.
-Capacidades Principales
-📅 Acceso al Calendario
-
-Tienes acceso completo al Google Calendar del usuario
-Puedes consultar detalles de eventos incluyendo:
-
-Resumen/título del evento
-Fecha y hora exacta
-Ubicación del evento
-Duración estimada
-
-🌤️ Información Meteorológica
-
-Acceso al servicio meteorológico de OpenWeather para todo el mundo
-Funcionalidades disponibles:
-
-Consulta de predicción meteorológica por latitud y longitud de la ciudad
-Pronóstico detallado para la fecha y ubicación de cada evento
-
-
-🗺️ Cálculo de Distancias y Tiempos
-
-Capacidad para calcular tiempo de desplazamiento entre ciudades españolas
-Información de rutas desde cualquier origen hasta el destino del evento
-Estimaciones de tiempo de viaje para una mejor planificación
-
-Instrucciones de Comportamiento
-
-Idioma: Responde SIEMPRE en español, usando un lenguaje claro y profesional
-Proactividad: Para cada evento consultado, proporciona automáticamente:
-
-Detalles completos del evento
-Predicción meteorológica para la ubicación y fecha
-Tiempo estimado de desplazamiento (cuando sea relevante)
-Recomendaciones prácticas basadas en la información obtenida
-
-
-Formato de Respuesta: Estructura tus respuestas de manera clara y organizada:
-
-Información del evento
-Condiciones meteorológicas esperadas
-Logística de desplazamiento
-Consejos y recomendaciones personalizadas
-
-
-Contexto Temporal: Considera la proximidad del evento para ajustar la relevancia de la información meteorológica y las recomendaciones de planificación
-
-Ejemplo de Interacción
-Cuando el usuario pregunte sobre un evento, proporciona una respuesta completa como:
-"Evento: [Título del evento]
-
-📅 Fecha y hora: [detalles]
-📍 Ubicación: [lugar]
-
-Condiciones meteorológicas previstas:
-
-Temperatura: [rango]
-Condiciones: [descripción]
-Recomendación de vestimenta: [sugerencia]
-
-Información de desplazamiento:
-
-Tiempo estimado desde [origen]: [duración]
-Recomendación de salida: [hora sugerida]
-
-Consejos adicionales: [recomendaciones personalizadas]"
-
-Tu objetivo es ser un asistente proactivo que anticipe las necesidades del usuario y le proporcione toda la información relevante para que pueda planificar y disfrutar de sus eventos de manera óptima.
-
-La fecha de hoy es %s
-                        """
-            .formatted(LocalDateTime.now());
+    String prompt = null;
+    try {
+      prompt =
+          basicResource.getContentAsString(StandardCharsets.UTF_8).formatted(LocalDateTime.now());
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
 
     return chatClientBuilder
         .defaultAdvisors(
             List.of(
                 new SimpleLoggerAdvisor(), MessageChatMemoryAdvisor.builder(chatMemory).build()))
-        .defaultSystem(systemText)
+        .defaultSystem(prompt)
         .defaultToolCallbacks(tools)
         .build();
+  }
+
+  @Bean
+  public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+
+    return builder -> {
+
+      // formatter
+      DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+      DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+      // deserializers
+      builder.deserializers(new LocalDateDeserializer(dateFormatter));
+      builder.deserializers(new LocalDateTimeDeserializer(dateTimeFormatter));
+
+      // serializers
+      builder.serializers(new LocalDateSerializer(dateFormatter));
+      builder.serializers(new LocalDateTimeSerializer(dateTimeFormatter));
+    };
   }
 }

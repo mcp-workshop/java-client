@@ -2,21 +2,14 @@ logging:
     level:
         io:
             modelcontextprotocol:
-                client: INFO
-                spec: INFO
+                client: DEBUG
+                spec: DEBUG
+    file:
+        name: /tmp/client.log
+    pattern:
+        console:
 spring:
     ai:
-        ollama:
-            base-url: http://192.168.86.24:11434
-            chat:
-                model: qwen3
-                options:
-                    seed: 123456789
-                    temperature: 0.9
-            embedding:
-                model: granite-embedding:278m
-                options:
-                    seed: 123456789
         mcp:
             client:
                 sse:
@@ -25,8 +18,11 @@ spring:
                             url: http://localhost:8080
                 stdio:
                     servers-configuration: "classpath:/mcp-servers-config.json"
+        anthropic:
+            api-key: ${ANTHROPIC_API_KEY}
     application:
         name: AssistantClient
     main:
         web-application-type: none
+        banner-mode: log
 
