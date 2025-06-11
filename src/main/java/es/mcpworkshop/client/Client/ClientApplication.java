@@ -2,15 +2,11 @@ package es.mcpworkshop.client.Client;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Scanner;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
-import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
-import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -49,23 +45,17 @@ public class ClientApplication implements CommandLineRunner {
   @Configuration
   static class AIConfig {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AIConfig.class);
-
-    @Value("classpath:enhanced-system-prompt.txt")
+    @Value("classpath:basic-prompt.txt")
     private Resource systemPrompt;
 
     @Bean
     public ChatClient chatClient(
-            ChatClient.Builder chatClientBuilder, ChatMemory chatMemory, ToolCallbackProvider tools)
+            ChatClient.Builder chatClientBuilder , ToolCallbackProvider tools)
             throws Exception {
-      LOG.info("Initializing ChatClient");
       String systemText =
               systemPrompt.getContentAsString(StandardCharsets.UTF_8).formatted(LocalDateTime.now());
 
       return chatClientBuilder
-              .defaultAdvisors(
-                      List.of(
-                              new SimpleLoggerAdvisor(), MessageChatMemoryAdvisor.builder(chatMemory).build()))
               .defaultSystem(systemText)
               .defaultToolCallbacks(tools)
               .build();

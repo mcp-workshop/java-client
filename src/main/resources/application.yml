@@ -1,9 +1,4 @@
 logging:
-    level:
-        io:
-            modelcontextprotocol:
-                client: DEBUG
-                spec: DEBUG
     file:
         name: /tmp/client.log
 spring:
@@ -18,10 +13,6 @@ spring:
 
         mcp:
             client:
-                sse:
-                    connections:
-                        server-1:
-                            url: http://localhost:8080
                 stdio:
                     servers-configuration: "classpath:/mcp-servers-config.json"
                 type: sync
